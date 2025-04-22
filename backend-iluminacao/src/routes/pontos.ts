@@ -17,7 +17,7 @@ router.post("/pontos", async function (
   res: Response
 ): Promise<void> {
   try {
-    const { etiqueta, tipo_poste, logradouro, latitude, longitude, estrutura } =
+    const { etiqueta, tipo_poste, logradouro, latitude, longitude, estrutura, luminaria } =
       req.body;
 
     if (!etiqueta || !tipo_poste || !logradouro || !latitude || !longitude) {
@@ -32,6 +32,7 @@ router.post("/pontos", async function (
       latitude,
       longitude,
       estrutura,
+      luminaria,
     });
 
     res.status(201).json(novoPonto);
@@ -49,7 +50,8 @@ router.put("/pontos/:id", async (req: Request, res: Response): Promise<void> => 
       logradouro,
       latitude,
       longitude,
-      estrutura
+      estrutura,
+      luminaria
     } = req.body;
 
     const ponto = await Ponto.findByPk(id);
@@ -65,6 +67,7 @@ router.put("/pontos/:id", async (req: Request, res: Response): Promise<void> => 
     ponto.latitude = latitude;
     ponto.longitude = longitude;
     ponto.estrutura = estrutura;
+    ponto.luminaria = luminaria;
 
     await ponto.save();
 

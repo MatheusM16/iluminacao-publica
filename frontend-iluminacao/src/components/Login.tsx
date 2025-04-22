@@ -21,7 +21,7 @@ export default function Login() {
     if (usuario === usuarioFixo && senha === senhaFixa) {
       console.log("Login bem-sucedido!");
       localStorage.setItem("logado", "true");
-      navigate("/", { replace: true });
+      window.location.href = "/";
     } else {
       setErro("Usuário ou senha incorretos");
       console.log("❌ Login falhou!");

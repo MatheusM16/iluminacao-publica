@@ -9,16 +9,7 @@ import { LatLngExpression, Icon, latLng } from "leaflet";
 import "leaflet-draw/dist/leaflet.draw.css";
 import { EditControl } from "react-leaflet-draw";
 import { useEffect, useRef, useState } from "react";
-
-type Ponto = {
-  id: number;
-  etiqueta: string;
-  tipo_poste: string;
-  logradouro: string;
-  latitude: number;
-  longitude: number;
-  estrutura: string;
-};
+import { Ponto, NodoEstrutura } from "./types";
 
 const centroMapa: LatLngExpression = [-23.5505, -46.6333];
 
@@ -40,6 +31,7 @@ export default function Mapa({
   onFiltrar: (visiveis: Ponto[]) => void;
 }) {
   const [pontosVisiveis, setPontosVisiveis] = useState<Ponto[]>(pontos);
+  const [estruturaAberta, setEstruturaAberta] = useState<number | null>(null);
   const drawnItems = useRef(null);
 
   useEffect(() => {
@@ -82,6 +74,23 @@ export default function Mapa({
     onFiltrar(pontos);
   }
 
+  function renderArvore(nodo: NodoEstrutura, nivel = 0){
+    const hasFilhos = nodo.filhos && nodo.filhos.length > 0;
+
+    return (
+      <div style={{ marginLeft: nivel * 16, marginTop: 4 }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <span style={{ marginRight: 6 }}>{hasFilhos ? "📂" : "📄"}</span>
+          {nodo.nome}
+        </div>
+        {hasFilhos &&
+          nodo.filhos!.map((filho, idx) => (
+            <div key={idx}>{renderArvore(filho, nivel + 1)}</div>
+          ))}
+      </div>
+    );
+  }
+
   return (
     <MapContainer
       center={centroMapa}
@@ -122,8 +131,37 @@ export default function Mapa({
             <br />
             Poste: {ponto.tipo_poste}
             <br />
-            Estrutura: {ponto.estrutura}
+            Latitude: {ponto.latitude}
             <br />
+            Longitude: {ponto.longitude}
+            <br />
+            <div
+              onClick={() =>
+                setEstruturaAberta((prev) =>
+                  prev === ponto.id ? null : ponto.id
+                )
+              }
+              style={{
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                fontWeight: "500",
+                marginTop: "8px",
+              }}
+            >
+              <span style={{ marginRight: "6px" }}>
+                {estruturaAberta === ponto.id ? "📂" : "📁"}
+              </span>
+              Estrutura: {ponto.estrutura.nome}
+            </div>
+            {estruturaAberta === ponto.id && (
+              <div style={{ marginTop: 6, marginLeft: 28 }}>
+                {ponto.estrutura.filhos &&
+                  ponto.estrutura.filhos.map((filho, index) => (
+                    <div key={index}>{renderArvore(filho, 1)}</div>
+                  ))}
+              </div>
+            )}
             <div className="mt-2 d-flex gap-2">
               <button
                 className="btn btn-sm btn-warning"

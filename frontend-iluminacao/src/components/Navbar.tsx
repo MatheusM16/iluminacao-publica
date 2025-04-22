@@ -15,7 +15,7 @@ export default function Navbar({
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
       <div className="container-fluid d-flex justify-content-between align-items-center">
-        <span className="navbar-brand">Iluminação Pública</span>
+        <span className="navbar-brand">🗺️ Iluminação Pública</span>
 
         <div className="d-flex gap-2">
           <button

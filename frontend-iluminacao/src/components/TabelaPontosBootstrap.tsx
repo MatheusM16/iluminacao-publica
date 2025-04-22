@@ -1,5 +1,10 @@
 import { useState } from "react";
 
+type NodoEstrutura = {
+  nome: string;
+  filhos?: NodoEstrutura[];
+};
+
 type Ponto = {
   id: number;
   etiqueta: string;
@@ -7,7 +12,7 @@ type Ponto = {
   logradouro: string;
   latitude: number;
   longitude: number;
-  estrutura: string;
+  estrutura: NodoEstrutura;
 };
 
 export default function TabelaPontosBootstrap({ dados }: { dados: Ponto[] }) {
@@ -19,6 +24,7 @@ export default function TabelaPontosBootstrap({ dados }: { dados: Ponto[] }) {
     latitude: "",
     longitude: "",
     estrutura: "",
+    luminaria: "",
   });
 
   const handleFiltroChange = (campo: string, valor: string) => {
@@ -26,21 +32,24 @@ export default function TabelaPontosBootstrap({ dados }: { dados: Ponto[] }) {
   };
 
   const dadosFiltrados = dados.filter((ponto) => {
+    const estruturaNome = ponto.estrutura?.nome || "";
+    const luminariaNome = ponto.estrutura?.filhos?.[0]?.nome || "";
+
     return Object.entries(filtros).every(([campo, valor]) => {
-      return (
-        valor === "" ||
-        String((ponto as any)[campo])
-          .toLowerCase()
-          .includes(valor.toLowerCase())
-      );
+      let dado = "";
+
+      if (campo === "estrutura") dado = estruturaNome;
+      else if (campo === "luminaria") dado = luminariaNome;
+      else dado = String((ponto as any)[campo]);
+
+      return valor === "" || dado.toLowerCase().includes(valor.toLowerCase());
     });
   });
 
   return (
-    <div className="container mt-3">
-      <h4 className="mb-3">Pontos Cadastrados</h4>
+    <div className="table-responsive">
       <table className="table table-bordered table-hover table-striped table-sm">
-        <thead className="table-dark">
+        <thead className="table-primary">
           <tr>
             <th>ID</th>
             <th>Etiqueta</th>
@@ -49,6 +58,7 @@ export default function TabelaPontosBootstrap({ dados }: { dados: Ponto[] }) {
             <th>Latitude</th>
             <th>Longitude</th>
             <th>Estrutura</th>
+            <th>Luminária</th>
           </tr>
           <tr>
             {Object.keys(filtros).map((campo) => (
@@ -72,7 +82,8 @@ export default function TabelaPontosBootstrap({ dados }: { dados: Ponto[] }) {
               <td>{ponto.logradouro}</td>
               <td>{ponto.latitude}</td>
               <td>{ponto.longitude}</td>
-              <td>{ponto.estrutura}</td>
+              <td>{ponto.estrutura?.nome}</td>
+              <td>{ponto.estrutura?.filhos?.[0]?.nome}</td>
             </tr>
           ))}
         </tbody>

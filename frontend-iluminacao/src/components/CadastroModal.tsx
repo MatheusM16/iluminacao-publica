@@ -14,9 +14,10 @@ export default function CadastroModal({
     etiqueta: "",
     tipo_poste: "",
     logradouro: "",
-    estrutura: "",
     latitude: "",
     longitude: "",
+    estrutura: "",
+    luminaria: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,14 +25,22 @@ export default function CadastroModal({
   };
 
   const handleSubmit = async () => {
+    const estruturaJson = {
+      nome: formData.estrutura,
+      filhos: formData.luminaria ? [{ nome: formData.luminaria }] : [],
+    };
+
     try {
       const res = await fetch("http://localhost:5000/pontos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...formData,
+          etiqueta: formData.etiqueta,
+          tipo_poste: formData.tipo_poste,
+          logradouro: formData.logradouro,
           latitude: Number(formData.latitude),
           longitude: Number(formData.longitude),
+          estrutura: estruturaJson,
         }),
       });
 
@@ -54,30 +63,75 @@ export default function CadastroModal({
       </Modal.Header>
       <Modal.Body>
         <Form>
-          {["etiqueta", "tipo_poste", "logradouro", "estrutura"].map(
-            (field) => (
-              <Form.Group key={field} className="mb-3">
-                <Form.Label>{field.replace("_", " ").toUpperCase()}</Form.Label>
-                <Form.Control
-                  type="text"
-                  name={field}
-                  value={(formData as any)[field]}
-                  onChange={handleChange}
-                />
-              </Form.Group>
-            )
-          )}
-          {["latitude", "longitude"].map((field) => (
-            <Form.Group key={field} className="mb-3">
-              <Form.Label>{field.toUpperCase()}</Form.Label>
-              <Form.Control
-                type="number"
-                name={field}
-                value={(formData as any)[field]}
-                onChange={handleChange}
-              />
-            </Form.Group>
-          ))}
+          <Form.Group className="mb-3">
+            <Form.Label>Etiqueta</Form.Label>
+            <Form.Control
+              type="text"
+              name="etiqueta"
+              value={formData.etiqueta}
+              onChange={handleChange}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Tipo do Poste</Form.Label>
+            <Form.Control
+              type="text"
+              name="tipo_poste"
+              value={formData.tipo_poste}
+              onChange={handleChange}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Logradouro</Form.Label>
+            <Form.Control
+              type="text"
+              name="logradouro"
+              value={formData.logradouro}
+              onChange={handleChange}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Estrutura</Form.Label>
+            <Form.Control
+              type="text"
+              name="estrutura"
+              value={formData.estrutura}
+              onChange={handleChange}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Luminária</Form.Label>
+            <Form.Control
+              type="text"
+              name="luminaria"
+              value={formData.luminaria}
+              onChange={handleChange}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Latitude</Form.Label>
+            <Form.Control
+              type="number"
+              name="latitude"
+              value={formData.latitude}
+              onChange={handleChange}
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3">
+            <Form.Label>Longitude</Form.Label>
+            <Form.Control
+              type="number"
+              name="longitude"
+              value={formData.longitude}
+              onChange={handleChange}
+            />
+          </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>

@@ -9,6 +9,7 @@ class Ponto extends Model {
   public latitude!: number;
   public longitude!: number;
   public estrutura!: string;
+  public luminaria!: string;
 }
 
 Ponto.init(
@@ -39,15 +40,15 @@ Ponto.init(
       allowNull: false,
     },
     estrutura: {
-      type: DataTypes.TEXT,
+      type: DataTypes.JSON,
       allowNull: true,
     },
   },
   {
     sequelize,
     modelName: "Ponto",
-    tableName: "pontos", 
-    timestamps: false,  
+    tableName: "pontos",
+    timestamps: false,
   }
 );
 
